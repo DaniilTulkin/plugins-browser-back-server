@@ -70,7 +70,7 @@ module.exports.login = async function(req, res) {
         )
         res.json({
             token, 
-            userId: user.id
+            email: user.email
         }) 
     }
     catch (e) {
