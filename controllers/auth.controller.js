@@ -1,19 +1,10 @@
-const { validationResult } = require('express-validator')
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const config = require('config')
+const config = require('../config/config')
 
 module.exports.register = async function(req, res) {
     try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array(),
-                message: 'Registration: validation error'
-            })
-        }
-
         const {email, password} = req.body
         const candidate = await User.findOne({email})
 
@@ -28,7 +19,7 @@ module.exports.register = async function(req, res) {
         await user.save()
 
         res.status(201).json({
-            message: 'Registration: user have been created'
+            message: 'Registration: user has been created'
         })
     }
     catch (e) {
@@ -40,23 +31,15 @@ module.exports.register = async function(req, res) {
 
 module.exports.login = async function(req, res) {
     try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array(),
-                message: 'Registration: validation error'
-            })
-        }
-
         const {email, password} = req.body
         const user = await User.findOne({email})
         if (!user) {
             return res.status(400).json({
-                message: 'Login: user not exists'
+                message: 'Login: user does not exist'
             })
         }
-
-        const isMatch = await bcrypt.compare.compare(password, user.password)
+        
+        const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
             return res.status(400).json({
                 message: 'Login: password is not correct'
@@ -65,7 +48,7 @@ module.exports.login = async function(req, res) {
 
         const token = jwt.sign(
             { userId: user.id },
-            config.get('jwtSecret'),
+            config.secret,
             { expiresIn: '30d'}
         )
         res.json({
