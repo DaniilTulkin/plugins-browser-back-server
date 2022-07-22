@@ -53,7 +53,7 @@ module.exports.login = async function(req, res) {
         )
         res.json({
             token, 
-            email: user.email
+            user: user.email
         }) 
     }
     catch (e) {
