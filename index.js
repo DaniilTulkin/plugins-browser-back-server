@@ -6,6 +6,7 @@ const path = require('path')
 const config = require('./config/config')
 
 const auth = require('./routes/auth.routes')
+const plugin = require('./routes/plugin.routes')
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'assets')))
 
 app.use('/api/auth', auth);
+app.use('/api/plugin', plugin);
 
 mongoose.connect(config.db)
 

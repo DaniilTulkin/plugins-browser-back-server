@@ -5,7 +5,7 @@ const config = require('../config/config')
 
 module.exports.register = async function(req, res) {
     try {
-        const {email, password} = req.body
+        const {login, email, password} = req.body
         const candidate = await User.findOne({email})
 
         if (candidate) {
@@ -15,7 +15,7 @@ module.exports.register = async function(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 12)
-        const user = new User({email, password: hashedPassword})
+        const user = new User({login, email, password: hashedPassword})
         await user.save()
 
         res.status(201).json({
@@ -53,7 +53,7 @@ module.exports.login = async function(req, res) {
         )
         res.json({
             token, 
-            user: user.email
+            user: user.login
         }) 
     }
     catch (e) {
